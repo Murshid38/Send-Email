@@ -9,10 +9,11 @@ pageextension 50100 SalesOrder extends "Sales Order"
     {
         addafter("&Print")
         {
-            action(SendEmail)
+            action("Send Email")
             {
                 ApplicationArea = All;
                 Image = SendMail;
+                ToolTip = 'Send email for the customer about the sales order.';
 
                 trigger OnAction()
                 begin
@@ -25,11 +26,11 @@ pageextension 50100 SalesOrder extends "Sales Order"
 
     local procedure SendEmail()
     var
+        SalesLine: Record "Sales Line";
         EmailMessage: Codeunit "Email Message";
         EmailSend: Codeunit Email;
         BodyMessage: Text;
         Recipient: Text;
-        SalesLine: Record "Sales Line";
         CustomerName: Text;
         SalesOrderNo: Text;
         LineNo: Text;
@@ -39,9 +40,9 @@ pageextension 50100 SalesOrder extends "Sales Order"
         Total: Text;
     begin
         Clear(BodyMessage);
-        Clear(Recipient);
+
         // Recipient := Rec."Sell-to E-Mail";
-        Recipient := 'praveen@sriqcorp.com';
+        Recipient := 'murshidmohamed38@gmail.com';
         CustomerName := Rec."Sell-to Customer Name";
         SalesOrderNo := Rec."No.";
 
@@ -50,7 +51,8 @@ pageextension 50100 SalesOrder extends "Sales Order"
 
         BodyMessage := 'Dear ' + CustomerName + ',<br><br>You have successfully places Sales Order No ' + SalesOrderNo + '<br><br><table style="font-family: Arial, Helvetica, sans-serif;border-style:1px solid #00838F;width: 70%;"><tr style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #00838F;color: white;"><th>LineNo</th><th>Description</th><th>Quanity</th><th>Unit Cost</th><th>Total</th></tr>';
 
-        if SalesLine.FindFirst() then
+        if SalesLine.FindSet() then
+            //changed the FindFirst() to FindSet() refer why?
             repeat
                 LineNo := Format(SalesLine."Line No.");
                 Description := Format(SalesLine.Description);
